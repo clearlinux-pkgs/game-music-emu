@@ -7,15 +7,17 @@
 #
 Name     : game-music-emu
 Version  : 0.6.3
-Release  : 1
+Release  : 2
 URL      : https://github.com/libgme/game-music-emu/archive/0.6.3/game-music-emu-0.6.3.tar.gz
 Source0  : https://github.com/libgme/game-music-emu/archive/0.6.3/game-music-emu-0.6.3.tar.gz
 Summary  : A video game emulation library for music.
 Group    : Development/Tools
 License  : GPL-2.0 LGPL-2.1
+Requires: game-music-emu-bin = %{version}-%{release}
 Requires: game-music-emu-lib = %{version}-%{release}
 Requires: game-music-emu-license = %{version}-%{release}
 BuildRequires : buildreq-cmake
+BuildRequires : pkgconfig(sdl2)
 BuildRequires : zlib-dev
 # Suppress stripping binaries
 %define __strip /bin/true
@@ -27,10 +29,20 @@ Game_Music_Emu 0.6.3: Game Music Emulators
 Game_Music_Emu is a collection of video game music file emulators that
 support the following formats and systems:
 
+%package bin
+Summary: bin components for the game-music-emu package.
+Group: Binaries
+Requires: game-music-emu-license = %{version}-%{release}
+
+%description bin
+bin components for the game-music-emu package.
+
+
 %package dev
 Summary: dev components for the game-music-emu package.
 Group: Development
 Requires: game-music-emu-lib = %{version}-%{release}
+Requires: game-music-emu-bin = %{version}-%{release}
 Provides: game-music-emu-devel = %{version}-%{release}
 Requires: game-music-emu = %{version}-%{release}
 
@@ -58,13 +70,16 @@ license components for the game-music-emu package.
 %prep
 %setup -q -n game-music-emu-0.6.3
 cd %{_builddir}/game-music-emu-0.6.3
+## copy_prepend content
+echo -e "\ninstall(TARGETS gme_player RUNTIME DESTINATION %{_bindir})" >> player/CMakeLists.txt
+## copy_prepend end
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1732130560
+export SOURCE_DATE_EPOCH=1732131317
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -83,7 +98,8 @@ ASFLAGS="$CLEAR_INTERMEDIATE_ASFLAGS"
 LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS"
 export GOAMD64=v2
 %cmake ..   -G 'Unix Makefiles'
-make  %{?_smp_mflags}
+make  %{?_smp_mflags}  all \
+gme_player
 popd
 
 %install
@@ -101,7 +117,7 @@ FFLAGS="$CLEAR_INTERMEDIATE_FFLAGS"
 FCFLAGS="$CLEAR_INTERMEDIATE_FCFLAGS"
 ASFLAGS="$CLEAR_INTERMEDIATE_ASFLAGS"
 LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS"
-export SOURCE_DATE_EPOCH=1732130560
+export SOURCE_DATE_EPOCH=1732131317
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/game-music-emu
 cp %{_builddir}/game-music-emu-%{version}/license.gpl2.txt %{buildroot}/usr/share/package-licenses/game-music-emu/4cc77b90af91e615a64ae04893fdffa7939db84c || :
@@ -111,9 +127,16 @@ GOAMD64=v2
 pushd clr-build
 %make_install
 popd
+## install_append content
+make -C clr-build/player install DESTDIR=%{buildroot}
+## install_append end
 
 %files
 %defattr(-,root,root,-)
+
+%files bin
+%defattr(-,root,root,-)
+/usr/bin/gme_player
 
 %files dev
 %defattr(-,root,root,-)
