@@ -1,7 +1,10 @@
+libgme.so.0:gme_autoload_playback_limit
 libgme.so.0:gme_clear_playlist
 libgme.so.0:gme_delete
+libgme.so.0:gme_disable_echo
 libgme.so.0:gme_enable_accuracy
 libgme.so.0:gme_equalizer
+libgme.so.0:gme_fixed_track_count
 libgme.so.0:gme_free_info
 libgme.so.0:gme_identify_extension
 libgme.so.0:gme_identify_file
@@ -12,6 +15,7 @@ libgme.so.0:gme_load_data
 libgme.so.0:gme_load_file
 libgme.so.0:gme_load_m3u
 libgme.so.0:gme_load_m3u_data
+libgme.so.0:gme_load_tracks
 libgme.so.0:gme_multi_channel
 libgme.so.0:gme_mute_voice
 libgme.so.0:gme_mute_voices
@@ -25,6 +29,7 @@ libgme.so.0:gme_seek_samples
 libgme.so.0:gme_set_autoload_playback_limit
 libgme.so.0:gme_set_equalizer
 libgme.so.0:gme_set_fade
+libgme.so.0:gme_set_fade_msecs
 libgme.so.0:gme_set_stereo_depth
 libgme.so.0:gme_set_tempo
 libgme.so.0:gme_set_user_cleanup
